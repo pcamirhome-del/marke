@@ -35,14 +35,16 @@ export const DEFAULT_SETTINGS: AppSettings = {
   appName: 'سوبر ماركت برو',
 };
 
+// تغيير المفتاح لـ v3 لضمان بداية فريش ببيانات تجريبية
 export const STORAGE_KEYS = {
-  APP_STATE: 'supermarket_pro_state_v2',
+  APP_STATE: 'supermarket_pro_state_v3_final',
 };
 
-// بيانات تجريبية لتظهر على Vercel
+// بيانات تجريبية محسنة تظهر فوراً
 export const SEED_COMPANIES: Company[] = [
   { id: 'c1', code: 100, name: 'شركة الهلال للمواد الغذائية', phone: '0501234567', address: 'الرياض - حي الملز' },
   { id: 'c2', code: 101, name: 'مؤسسة النور للتجارة والتوزيع', phone: '0559876543', address: 'جدة - المنطقة الصناعية' },
+  { id: 'c3', code: 102, name: 'صافولا لزيوت الطعام', phone: '0540001112', address: 'الدمام' },
 ];
 
 export const SEED_PRODUCTS: Product[] = [
@@ -50,6 +52,7 @@ export const SEED_PRODUCTS: Product[] = [
   { barcode: '6281002', name: 'زيت نباتي 1.5 لتر', companyId: 'c1', wholesalePrice: 12.50, quantity: 120, category: 'زيوت', unit: 'حبة' },
   { barcode: '6281003', name: 'مكرونة إيطالية 500جم', companyId: 'c2', wholesalePrice: 3.25, quantity: 200, category: 'معلبات', unit: 'حبة' },
   { barcode: '6281004', name: 'شاي أحمر كبوس 100 فتلة', companyId: 'c2', wholesalePrice: 14.00, quantity: 15, category: 'مشروبات', unit: 'علبة' },
+  { barcode: '6281005', name: 'سكر ناعم 10 كجم', companyId: 'c3', wholesalePrice: 28.00, quantity: 8, category: 'حبوب', unit: 'كيس' },
 ];
 
 const generatePastDate = (daysAgo: number) => {
@@ -60,7 +63,7 @@ const generatePastDate = (daysAgo: number) => {
 
 export const SEED_INVOICES: Invoice[] = [
   {
-    id: 1000,
+    id: 1001,
     companyId: 'c1',
     date: generatePastDate(5),
     expiryDate: generatePastDate(-2),
@@ -72,7 +75,7 @@ export const SEED_INVOICES: Invoice[] = [
     status: 'Partial'
   },
   {
-    id: 1001,
+    id: 1002,
     companyId: 'c2',
     date: generatePastDate(2),
     expiryDate: generatePastDate(-5),
@@ -82,5 +85,17 @@ export const SEED_INVOICES: Invoice[] = [
     installments: [{ id: 'inst2', date: generatePastDate(1), amount: 325.00 }],
     isReceived: true,
     status: 'Paid'
+  },
+  {
+    id: 1003,
+    companyId: 'c3',
+    date: generatePastDate(0),
+    expiryDate: generatePastDate(-10),
+    items: [{ barcode: '6281005', name: 'سكر ناعم 10 كجم', quantity: 50, wholesalePrice: 28.00, sellingPrice: 32.20 }],
+    totalValue: 1400.00,
+    paidAmount: 0.00,
+    installments: [],
+    isReceived: false,
+    status: 'Pending'
   }
 ];

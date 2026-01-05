@@ -18,11 +18,21 @@ export function useStore() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // نضمن وجود الإعدادات والمستخدمين حتى لو كانت البيانات القديمة ناقصة
+        
+        // التحقق مما إذا كانت المصفوفات فارغة بعد التحميل لضمان حقن البيانات التجريبية
+        const companies = (parsed.companies && parsed.companies.length > 0) ? parsed.companies : SEED_COMPANIES;
+        const products = (parsed.products && parsed.products.length > 0) ? parsed.products : SEED_PRODUCTS;
+        const invoices = (parsed.invoices && parsed.invoices.length > 0) ? parsed.invoices : SEED_INVOICES;
+        const users = (parsed.users && parsed.users.length > 0) ? parsed.users : [INITIAL_USER];
+
         return {
           ...INITIAL_STATE,
           ...parsed,
-          currentUser: null // دائماً نبدأ بتسجيل الخروج
+          users,
+          companies,
+          products,
+          invoices,
+          currentUser: null // إجبار تسجيل الدخول دائماً عند فتح الموقع
         };
       } catch (e) {
         return INITIAL_STATE;
