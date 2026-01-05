@@ -1,14 +1,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { AppState, User, Company, Product, Invoice, AppSettings, Installment } from './types';
-import { STORAGE_KEYS, INITIAL_USER, DEFAULT_SETTINGS } from './constants';
+import { STORAGE_KEYS, INITIAL_USER, DEFAULT_SETTINGS, SEED_COMPANIES, SEED_PRODUCTS, SEED_INVOICES } from './constants';
 
 const INITIAL_STATE: AppState = {
   users: [INITIAL_USER],
   currentUser: null,
-  companies: [],
-  products: [],
-  invoices: [],
+  companies: SEED_COMPANIES,
+  products: SEED_PRODUCTS,
+  invoices: SEED_INVOICES,
   settings: DEFAULT_SETTINGS,
 };
 
@@ -17,7 +17,13 @@ export function useStore() {
     const saved = localStorage.getItem(STORAGE_KEYS.APP_STATE);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // نضمن وجود الإعدادات والمستخدمين حتى لو كانت البيانات القديمة ناقصة
+        return {
+          ...INITIAL_STATE,
+          ...parsed,
+          currentUser: null // دائماً نبدأ بتسجيل الخروج
+        };
       } catch (e) {
         return INITIAL_STATE;
       }
@@ -85,7 +91,6 @@ export function useStore() {
     const remaining = invoiceData.totalValue - invoiceData.paidAmount;
     const status = remaining <= 0 ? 'Paid' : (invoiceData.paidAmount > 0 ? 'Partial' : 'Pending');
 
-    // Expiry is 7 days from now
     const dateObj = new Date(invoiceData.date);
     const expiryObj = new Date(dateObj);
     expiryObj.setDate(expiryObj.getDate() + 7);
@@ -97,7 +102,10 @@ export function useStore() {
       expiryDate: expiryObj.toISOString()
     };
 
-    setState(prev => ({ ...prev, invoices: [...prev.invoices, newInvoice] }));
+    setState(prev => {
+      const updatedState = { ...prev, invoices: [...prev.invoices, newInvoice] };
+      return updatedState;
+    });
 
     if (newInvoice.isReceived) {
       newInvoice.items.forEach(item => {
