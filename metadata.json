@@ -1,0 +1,7 @@
+{
+  "name": "SuperMarket Pro - Advanced Management System",
+  "description": "A comprehensive supermarket management application featuring inventory tracking, sales reporting, invoice management with installments, and camera-based barcode scanning.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
