@@ -3,13 +3,20 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>سوبر ماركت برو - نظام الإدارة المتقدم</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>سوبر ماركت برو - إدارة متكاملة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* تحسين عرض الجداول على الهاتف */
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       @media print {
         .no-print {
@@ -21,6 +28,21 @@
       }
       .print-only {
         display: none;
+      }
+      /* تحسين شكل السكرول بار */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
       }
     </style>
   <script type="importmap">
@@ -35,7 +57,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-50 text-gray-900">
+  <body class="bg-gray-50 text-gray-900 select-none">
     <div id="root"></div>
   </body>
 </html>

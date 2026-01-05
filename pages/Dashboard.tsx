@@ -9,7 +9,8 @@ import {
   ShoppingCart,
   Building2,
   Calendar,
-  Clock
+  Clock,
+  ArrowRight
 } from 'lucide-react';
 
 interface DashboardProps {
@@ -42,133 +43,154 @@ const Dashboard: React.FC<DashboardProps> = ({ store, setCurrentPage }) => {
       label: 'مبيعات اليوم', 
       value: `${totalSalesToday.toFixed(2)}`, 
       icon: TrendingUp, 
-      color: 'bg-green-100 text-green-600' 
+      color: 'bg-emerald-100 text-emerald-600',
+      id: 'sales'
     },
     { 
       label: 'إجمالي المنتجات', 
       value: totalStockItems, 
       icon: Package, 
-      color: 'bg-blue-100 text-blue-600' 
+      color: 'bg-blue-100 text-blue-600',
+      id: 'stock'
     },
     { 
       label: 'نواقص المخزون', 
       value: lowStockItems, 
       icon: AlertCircle, 
-      color: 'bg-red-100 text-red-600' 
+      color: 'bg-rose-100 text-rose-600',
+      id: 'inventory'
     },
     { 
-      label: 'فواتير غير مدفوعة', 
+      label: 'فواتير معلقة', 
       value: pendingInvoices, 
       icon: FileText, 
-      color: 'bg-amber-100 text-amber-600' 
+      color: 'bg-amber-100 text-amber-600',
+      id: 'invoices'
     },
   ];
 
   return (
-    <div className="text-right">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <div className="text-right space-y-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">نظام {state.settings.appName}</h1>
-          <p className="text-gray-500">مرحباً بك مجدداً في لوحة التحكم</p>
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900">لوحة التحكم</h1>
+          <p className="text-gray-500 text-sm md:text-base mt-1">أهلاً بك في نظام {state.settings.appName}</p>
         </div>
         
-        {/* Clock & Date Widget */}
-        <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-6 space-x-reverse">
-          <div className="flex items-center space-x-2 space-x-reverse text-indigo-600">
-            <Calendar size={20} />
+        {/* Clock & Date Widget - Improved for Mobile */}
+        <div className="w-full lg:w-auto bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between md:justify-end md:space-x-6 md:space-x-reverse">
+          <div className="flex items-center space-x-3 space-x-reverse text-indigo-600">
+            <div className="p-2 bg-indigo-50 rounded-lg">
+              <Calendar size={22} />
+            </div>
             <div className="text-right">
-              <div className="text-xs text-gray-400 font-bold">{dayName}</div>
-              <div className="text-sm font-bold">{dateStr}</div>
+              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{dayName}</div>
+              <div className="text-sm font-black whitespace-nowrap">{dateStr}</div>
             </div>
           </div>
-          <div className="w-px h-8 bg-gray-100"></div>
-          <div className="flex items-center space-x-2 space-x-reverse text-indigo-600">
-            <Clock size={20} />
-            <div className="text-2xl font-black font-mono">{timeStr}</div>
+          <div className="hidden md:block w-px h-10 bg-gray-100"></div>
+          <div className="flex items-center space-x-3 space-x-reverse text-indigo-600">
+            <div className="p-2 bg-indigo-50 rounded-lg">
+              <Clock size={22} />
+            </div>
+            <div className="text-xl md:text-2xl font-black font-mono tracking-tighter">{timeStr}</div>
           </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats Grid - Responsive */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center flex-row-reverse">
-            <div className={`p-4 rounded-lg ml-4 bg-opacity-10 ${stat.color}`}>
-              <stat.icon size={24} />
+          <div 
+            key={i} 
+            onClick={() => setCurrentPage(stat.id === 'invoices' ? 'invoices' : stat.id)}
+            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center lg:items-end lg:flex-row-reverse cursor-pointer hover:shadow-md transition-shadow group"
+          >
+            <div className={`p-4 rounded-xl mb-3 lg:mb-0 lg:ml-4 bg-opacity-10 ${stat.color} group-hover:scale-110 transition-transform`}>
+              <stat.icon size={28} />
             </div>
-            <div>
-              <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
-              <h3 className="text-2xl font-bold text-gray-800">{stat.value}</h3>
+            <div className="text-center lg:text-right">
+              <p className="text-xs text-gray-500 font-bold mb-1">{stat.label}</p>
+              <h3 className="text-xl md:text-2xl font-black text-gray-900">{stat.value}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-bold mb-4">إجراءات سريعة</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+          <h2 className="text-lg font-black mb-6 border-r-4 border-indigo-600 pr-3 leading-none">إجراءات سريعة</h2>
           <div className="grid grid-cols-2 gap-4">
             <button 
               onClick={() => setCurrentPage('create-order')}
-              className="p-4 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors font-medium flex flex-col items-center justify-center space-y-2"
+              className="group p-5 bg-indigo-50 text-indigo-700 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all font-bold flex flex-col items-center justify-center space-y-3 shadow-sm"
             >
-              <ShoppingCart size={24} />
-              <span>إنشاء طلب جديد</span>
+              <ShoppingCart size={28} className="group-hover:scale-110 transition-transform" />
+              <span className="text-sm">طلب جديد</span>
             </button>
             <button 
               onClick={() => setCurrentPage('stock')}
-              className="p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium flex flex-col items-center justify-center space-y-2"
+              className="group p-5 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all font-bold flex flex-col items-center justify-center space-y-3 shadow-sm"
             >
-              <Package size={24} />
-              <span>فحص المخزون</span>
+              <Package size={28} className="group-hover:scale-110 transition-transform" />
+              <span className="text-sm">المخزون</span>
             </button>
             <button 
               onClick={() => setCurrentPage('companies')}
-              className="p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium flex flex-col items-center justify-center space-y-2"
+              className="group p-5 bg-purple-50 text-purple-700 rounded-2xl hover:bg-purple-600 hover:text-white transition-all font-bold flex flex-col items-center justify-center space-y-3 shadow-sm"
             >
-              <Building2 size={24} />
-              <span>إضافة مورد</span>
+              <Building2 size={28} className="group-hover:scale-110 transition-transform" />
+              <span className="text-sm">الموردين</span>
             </button>
             <button 
               onClick={() => setCurrentPage('sales')}
-              className="p-4 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors font-medium flex flex-col items-center justify-center space-y-2"
+              className="group p-5 bg-amber-50 text-amber-700 rounded-2xl hover:bg-amber-600 hover:text-white transition-all font-bold flex flex-col items-center justify-center space-y-3 shadow-sm"
             >
-              <TrendingUp size={24} />
-              <span>تقارير المبيعات</span>
+              <TrendingUp size={28} className="group-hover:scale-110 transition-transform" />
+              <span className="text-sm">التقارير</span>
             </button>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-bold mb-4">آخر العمليات</h2>
-          <div className="overflow-x-auto">
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="flex justify-between items-center mb-6">
+            <button 
+              onClick={() => setCurrentPage('invoices')}
+              className="text-xs font-bold text-indigo-600 flex items-center hover:translate-x-[-4px] transition-transform"
+            >
+              <ArrowRight size={14} className="ml-1 rotate-180" />
+              عرض الكل
+            </button>
+            <h2 className="text-lg font-black border-r-4 border-indigo-600 pr-3 leading-none">أحدث العمليات</h2>
+          </div>
+          
+          <div className="table-container">
             <table className="w-full text-right">
               <thead>
-                <tr className="text-gray-400 text-xs font-medium uppercase tracking-wider border-b border-gray-100">
-                  <th className="pb-3 pr-4">رقم الفاتورة</th>
-                  <th className="pb-3">الشركة الموردة</th>
-                  <th className="pb-3">المبلغ الإجمالي</th>
-                  <th className="pb-3">الحالة</th>
+                <tr className="text-gray-400 text-xs font-bold uppercase tracking-widest border-b border-gray-100">
+                  <th className="pb-4 pr-4">المعرف</th>
+                  <th className="pb-4">المورد</th>
+                  <th className="pb-4 text-center">المبلغ</th>
+                  <th className="pb-4 text-left pl-4">الحالة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
-                {state.invoices.slice(-5).reverse().map(inv => {
+              <tbody className="divide-y divide-gray-50">
+                {state.invoices.slice(-6).reverse().map(inv => {
                   const company = state.companies.find(c => c.id === inv.companyId);
-                  const statusMap: Record<string, string> = {
-                    'Paid': 'مدفوعة',
-                    'Partial': 'جزئية',
-                    'Pending': 'معلقة'
+                  const statusMap: Record<string, {label: string, class: string}> = {
+                    'Paid': {label: 'مدفوعة', class: 'bg-emerald-100 text-emerald-700'},
+                    'Partial': {label: 'جزئية', class: 'bg-amber-100 text-amber-700'},
+                    'Pending': {label: 'معلقة', class: 'bg-rose-100 text-rose-700'}
                   };
+                  const status = statusMap[inv.status] || {label: inv.status, class: 'bg-gray-100 text-gray-700'};
                   return (
-                    <tr key={inv.id} className="text-sm">
-                      <td className="py-3 font-medium pr-4">#{inv.id}</td>
-                      <td className="py-3">{company?.name || 'غير معروف'}</td>
-                      <td className="py-3 font-semibold">${inv.totalValue.toFixed(2)}</td>
-                      <td className="py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          inv.status === 'Paid' ? 'bg-green-100 text-green-700' : 
-                          inv.status === 'Partial' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
-                        }`}>
-                          {statusMap[inv.status] || inv.status}
+                    <tr key={inv.id} className="text-sm hover:bg-gray-50 transition-colors group">
+                      <td className="py-4 pr-4 font-black text-gray-400 group-hover:text-indigo-600">#{inv.id}</td>
+                      <td className="py-4 font-bold">{company?.name || '---'}</td>
+                      <td className="py-4 text-center font-black">${inv.totalValue.toFixed(2)}</td>
+                      <td className="py-4 text-left pl-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${status.class}`}>
+                          {status.label}
                         </span>
                       </td>
                     </tr>
@@ -176,7 +198,7 @@ const Dashboard: React.FC<DashboardProps> = ({ store, setCurrentPage }) => {
                 })}
                 {state.invoices.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-4 text-center text-gray-500">لا توجد عمليات مسجلة</td>
+                    <td colSpan={4} className="py-12 text-center text-gray-400 italic">لا توجد عمليات مسجلة حالياً</td>
                   </tr>
                 )}
               </tbody>
