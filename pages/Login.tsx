@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingBasket, Lock, User as UserIcon, Calendar, Clock, Smile } from 'lucide-react';
+import { ShoppingBasket, Lock, User as UserIcon, Calendar, Clock, Smile, Info } from 'lucide-react';
 
 interface LoginProps {
   store: any;
@@ -43,14 +43,8 @@ const Login: React.FC<LoginProps> = ({ store }) => {
           <p className="text-xl text-indigo-600 font-bold mb-8">{welcomeUser}</p>
           <p className="text-gray-500 mb-6">يتم توجيهك الآن إلى لوحة التحكم...</p>
           <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-            <div className="bg-indigo-600 h-full animate-[progress_1s_ease-in-out_infinite]" style={{ width: '100%' }}></div>
+            <div className="bg-indigo-600 h-full animate-pulse" style={{ width: '100%' }}></div>
           </div>
-          <style>{`
-            @keyframes progress {
-              0% { transform: translateX(100%); }
-              100% { transform: translateX(-100%); }
-            }
-          `}</style>
         </div>
       </div>
     );
@@ -75,14 +69,14 @@ const Login: React.FC<LoginProps> = ({ store }) => {
           <div className="w-20 h-20 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <ShoppingBasket size={48} />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">سوبر ماركت برو</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{store.state.settings.appName}</h1>
           <p className="text-indigo-100 mt-2">نظام الإدارة والمخزون المتقدم</p>
         </div>
         
         <form onSubmit={handleSubmit} className="p-10 space-y-6 text-right">
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 animate-pulse">
-              خطأ في البيانات. يرجى المحاولة مرة أخرى.
+            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 animate-pulse text-center">
+              بيانات الدخول غير صحيحة
             </div>
           )}
           
@@ -94,7 +88,7 @@ const Login: React.FC<LoginProps> = ({ store }) => {
                 autoFocus
                 type="text" 
                 className="w-full pr-12 pl-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 focus:bg-white transition-all outline-none text-gray-800"
-                placeholder="اسم المستخدم"
+                placeholder="admin"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
               />
@@ -104,11 +98,11 @@ const Login: React.FC<LoginProps> = ({ store }) => {
           <div className="space-y-2">
             <label className="text-sm font-bold text-gray-700 uppercase tracking-wider block">كلمة المرور</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Lock className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input 
                 type="password" 
                 className="w-full pr-12 pl-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-indigo-500 focus:bg-white transition-all outline-none text-gray-800"
-                placeholder="••••••••"
+                placeholder="admin"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
               />
@@ -121,6 +115,15 @@ const Login: React.FC<LoginProps> = ({ store }) => {
           >
             تسجيل الدخول
           </button>
+
+          <div className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start space-x-3 space-x-reverse">
+            <Info className="text-blue-600 shrink-0 mt-0.5" size={18} />
+            <div className="text-xs text-blue-700 leading-relaxed font-bold">
+              بيانات الدخول الافتراضية للوحة التحكم: <br/>
+              اسم المستخدم: <span className="underline">admin</span> <br/>
+              كلمة المرور: <span className="underline">admin</span>
+            </div>
+          </div>
         </form>
       </div>
     </div>

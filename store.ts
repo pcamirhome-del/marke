@@ -14,33 +14,36 @@ const INITIAL_STATE: AppState = {
 
 export function useStore() {
   const [state, setState] = useState<AppState>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.APP_STATE);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        
-        // التحقق مما إذا كانت المصفوفات فارغة بعد التحميل لضمان حقن البيانات التجريبية
-        const companies = (parsed.companies && parsed.companies.length > 0) ? parsed.companies : SEED_COMPANIES;
-        const products = (parsed.products && parsed.products.length > 0) ? parsed.products : SEED_PRODUCTS;
-        const invoices = (parsed.invoices && parsed.invoices.length > 0) ? parsed.invoices : SEED_INVOICES;
-        const users = (parsed.users && parsed.users.length > 0) ? parsed.users : [INITIAL_USER];
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.APP_STATE);
+      if (!saved) return INITIAL_STATE;
+      
+      const parsed = JSON.parse(saved);
+      
+      // منطق الصيانة الإجباري: إذا كانت البيانات فارغة، استخدم SEED_DATA فوراً
+      const companies = (parsed.companies && parsed.companies.length > 0) ? parsed.companies : SEED_COMPANIES;
+      const products = (parsed.products && parsed.products.length > 0) ? parsed.products : SEED_PRODUCTS;
+      const invoices = (parsed.invoices && parsed.invoices.length > 0) ? parsed.invoices : SEED_INVOICES;
+      const users = (parsed.users && parsed.users.length > 0) ? parsed.users : [INITIAL_USER];
+      const settings = parsed.settings || DEFAULT_SETTINGS;
 
-        return {
-          ...INITIAL_STATE,
-          ...parsed,
-          users,
-          companies,
-          products,
-          invoices,
-          currentUser: null // إجبار تسجيل الدخول دائماً عند فتح الموقع
-        };
-      } catch (e) {
-        return INITIAL_STATE;
-      }
+      return {
+        ...INITIAL_STATE,
+        ...parsed,
+        users,
+        companies,
+        products,
+        invoices,
+        settings,
+        currentUser: null 
+      };
+    } catch (e) {
+      console.error("Store Init Error:", e);
+      return INITIAL_STATE;
     }
-    return INITIAL_STATE;
   });
 
+  // حفظ الحالة في localStorage عند أي تغيير
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.APP_STATE, JSON.stringify(state));
   }, [state]);
@@ -112,10 +115,7 @@ export function useStore() {
       expiryDate: expiryObj.toISOString()
     };
 
-    setState(prev => {
-      const updatedState = { ...prev, invoices: [...prev.invoices, newInvoice] };
-      return updatedState;
-    });
+    setState(prev => ({ ...prev, invoices: [...prev.invoices, newInvoice] }));
 
     if (newInvoice.isReceived) {
       newInvoice.items.forEach(item => {
